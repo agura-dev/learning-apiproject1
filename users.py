@@ -65,6 +65,19 @@ async def user(id: int, name: str):
 
 en la busqueda, la url seria: ?id=1&name=ciro
 '''
+
+#Funcion para crear usuarios usando un post
+@app.post("/user/")
+async def user(user: User):
+    if type(search_user(user.id)) == User:
+        return {"Error": "User already exists in DB"}
+    else:
+        users_list.append(user)
+
+
+
+
+
 #Generalizo con una funcion search_user
 def search_user(id: int):
     users = filter (lambda user:user.id == id, users_list)
@@ -72,3 +85,10 @@ def search_user(id: int):
         return list(users)[0]
     except:
         return {"error": "User not found"}
+
+
+
+
+
+
+
