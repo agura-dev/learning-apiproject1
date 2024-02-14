@@ -74,7 +74,36 @@ async def user(user: User):
     else:
         users_list.append(user)
 
+#Function to update users        
+@app.put("/user/")
+async def user(user: User):
 
+    found = False
+
+    for index, saved_user in enumerate(users_list):
+        if saved_user.id == user.id:
+            users_list[index] = user
+            found = True
+    if not found:
+        return {"error": "User not updated"}
+    else:
+        return user
+
+#Function to delete users
+    
+@app.delete("/user/{id}")
+#Le pasamos el id para eliminar
+async def user(id: int):
+     
+    found = False
+
+    for index, saved_user in enumerate(users_list):
+        if saved_user.id == id:
+            del users_list[index]
+            found = True
+    if not found:
+        return{"error":"User not deleted"}
+        
 
 
 
@@ -85,10 +114,4 @@ def search_user(id: int):
         return list(users)[0]
     except:
         return {"error": "User not found"}
-
-
-
-
-
-
-
+    
