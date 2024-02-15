@@ -1,12 +1,21 @@
-from fastapi import FastAPI
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-app = FastAPI()
+router = APIRouter(prefix="/users")
+
+'''
+router = APIRouter(prefix="/users",
+                   tags=["users"],
+                   responses={404:{"message":"not found"}})
+'''
+
 ## Start the server with: python3 -m uvicorn users:app --reload
 
-@app.get("/")
+'''
+@router.get("/")
 async def root():
     return "Main page"
+'''
 
 #User entity
 class User(BaseModel): #BaseModel help us to create an entity
@@ -29,8 +38,9 @@ async def userslocal():
             {"name": "Ciro", "lastname": "Herrera", "age": 8}]
 '''
 
+#Function to get the user list
 
-@app.get("/users")
+@router.get("/")
 async def users():
     return users_list
 
@@ -48,14 +58,14 @@ async def user(id: int): #Creamos una nueva función user y se define el tipo de
     except:
         return {"error": "User not found"}
 '''
-@app.get("/user/{id}") #Igualamos una clave con un valor en la URL
+@router.get("/{id}") #Igualamos una clave con un valor en la URL
 async def user(id: int):
     return search_user(id)
     
 #Funcion para obtener usuarios por ID
 #en esta ocasión usando la query
     
-@app.get("/user/") #Igualamos una clave con un valor en la URL
+@router.get("/") #Igualamos una clave con un valor en la URL
 async def user(id: int): #Agrego parametro de busqueda
     return search_user(id)
     
@@ -67,15 +77,16 @@ en la busqueda, la url seria: ?id=1&name=ciro
 '''
 
 #Funcion para crear usuarios usando un post
-@app.post("/user/")
+@router.post("/")
 async def user(user: User):
     if type(search_user(user.id)) == User:
-        return {"Error": "User already exists in DB"}
-    else:
-        users_list.append(user)
+        raise HTTPException(status_code=204, detail="The user already exists")
+        #return {"Error": "User already exists in DB"}
+    users_list.append(user)
+    return user
 
 #Function to update users        
-@app.put("/user/")
+@router.put("/")
 async def user(user: User):
 
     found = False
@@ -91,7 +102,7 @@ async def user(user: User):
 
 #Function to delete users
     
-@app.delete("/user/{id}")
+@router.delete("/{id}")
 #Le pasamos el id para eliminar
 async def user(id: int):
      
