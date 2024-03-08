@@ -2,7 +2,7 @@
 # Install FastAPI: pip3 install "fastapi[all]"
 from fastapi import FastAPI
 # Import products as file
-from routers import products, users, jwt_auth_users
+from routers import products, users, jwt_auth_users, users_db
 from fastapi.staticfiles import StaticFiles
 
 #http://127.0.0.1:8000/
@@ -18,6 +18,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 #Oauth2
 app.include_router(jwt_auth_users.router)
+
+#userdb
+app.include_router(users_db.router)
+
 
 @app.get("/")
 async def root():
